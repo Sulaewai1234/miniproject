@@ -1,0 +1,191 @@
+const express = require('express');
+const mysql = require('mysql2');
+const path = require('path');
+const session = require('express-session');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/uploads");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+const app = express();
+
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use(express.static('public'));
+
+app.use(session({
+    secret: 'mysecretkey',
+    resave: false,
+    saveUninitialized: true
+}));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'node_auth'
+});
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
+
+app.post('/register', upload.single('image'), (req, res) => {
+    const { username, email, password } = req.body;
+    const image = req.file ? req.file.filename : 'default.jpg';
+    const sql = "INSERT INTO users (username, email, password, profile_image) VALUES (?, ?, ?, ?)";
+    db.query(sql, [username, email, password, image], (err, result) => {
+        res.redirect('/login');
+    });
+});
+
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
+    db.query(sql, [email, password], (err, results) => {
+        if (err) return res.send("Database Error");
+        if (results.length > 0) {
+            req.session.isLoggedIn = true;
+            req.session.username = results[0].username; 
+            res.redirect('/dashboard/main');
+        } else {
+            res.send("Email သို့မဟုတ် Password မှားနေပါသည်။");
+        }
+    });
+});
+
+
+app.get('/dashboard/main', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'dashboard', 'main.html'));
+});
+
+app.get('/dashboard/setting', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'dashboard', 'setting.html'));
+});
+
+app.get('/dashboard/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.send("Error logging out");
+        }
+        res.redirect('/login'); 
+    });
+});
+
+app.get('/api/get-user-count', (req, res) => {
+    db.query("SELECT COUNT(*) AS total FROM users", (err, results) => {
+        res.json({ count: results[0].total });
+    });
+});
+
+app.get('/api/get-username', (req, res) => {
+    res.json({ username: req.session.username || "Admin" });
+});
+
+
+app.get('/api/get-user-data', (req, res) => {
+    if (!req.session.username) {
+        return res.status(401).json({ error: "Not logged in" });
+    }
+    
+    const sql = "SELECT * FROM users WHERE username = ?";
+    db.query(sql, [req.session.username], (err, results) => {
+        if (err || results.length === 0) return res.status(404).json({ error: "User not found" });
+        res.json(results[0]);
+    });
+});
+
+
+app.get('/welcome', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    db.query('SELECT * FROM users', (err, allUsers) => {
+        res.render('welcome', { userList: allUsers });
+    });
+});
+
+app.post('/add-user', upload.single('image'), (req, res) => {
+    const { username, email, password } = req.body;
+    const image = req.file ? req.file.filename : 'default.jpg';
+    db.query("INSERT INTO users (username, email, password, profile_image) VALUES (?, ?, ?, ?)", [username, email, password, image], () => {
+        res.redirect('/welcome');
+    });
+});
+app.post('/update-profile', upload.single('image'), (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    const { email, password } = req.body;
+    const username = req.session.username;
+
+    if (req.file) {
+        db.query("UPDATE users SET email=?, password=?, profile_image=? WHERE username=?", [email, password, req.file.filename, username], () => res.redirect('/dashboard/settings'));
+    } else {
+        db.query("UPDATE users SET email=?, password=? WHERE username=?", [email, password, username], () => res.redirect('/dashboard/settings'));
+    }
+});
+
+app.get('/delete-user/:id', (req, res) => {
+    db.query("DELETE FROM users WHERE id = ?", [req.params.id], () => res.redirect('/welcome'));
+});
+
+app.get('/dashboard/backup', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'dashboard', 'backup.html'));
+});
+
+app.get('/dashboard/shopinfo', (req, res) => {
+    if (!req.session.isLoggedIn) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'dashboard', 'shopinfo.html'));
+});
+
+// ၁။ Database ထဲက Data ဆွဲထုတ်ရန် (GET)
+app.get('/api/get-shop-info', (req, res) => {
+    const query = "SELECT * FROM shop_settings WHERE id = 1";
+    db.query(query, (err, result) => {
+        if (err) return res.status(500).json({ error: "Data error" });
+        // result[0] ရှိရင်ပိုမယ်၊ မရှိရင် empty object ပိုမယ်
+        res.json(result.length > 0 ? result[0] : {}); 
+    });
+});
+
+// ၂။ Shop Info Update လုပ်ရန် (POST/UPDATE)
+app.post('/api/update-shop-info', upload.single('logo'), (req, res) => {
+    const { name, phone, email, address, printer, thank_msg, type } = req.body;
+    let logoPath = req.file ? req.file.filename : null;
+
+    // အကယ်၍ ပုံအသစ်တင်ရင် ပုံကိုပါ update လုပ်မယ်
+    let query = "UPDATE shop_settings SET clinic_name=?, phone=?, email=?, address=?, printer_type=?, thank_msg=?, clinic_type=?";
+    let params = [name, phone, email, address, printer, thank_msg, type];
+
+    if (logoPath) {
+        query += ", logo_path=?";
+        params.push(logoPath);
+    }
+    query += " WHERE id=1";
+
+    db.query(query, params, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.send("Error updating settings");
+        }
+        res.redirect('/dashboard/shopinfo'); // အောင်မြင်ရင် page ပြန်သွားမယ်
+    });
+});
+
+app.listen(3000, () => {
+    console.log("Server is running on http://localhost:3000");
+});

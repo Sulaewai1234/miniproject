@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="d-flex">
+     <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <h4 class="text-white text-center py-4">Software</h4>
+            <ul class="nav flex-column">
+    <li class="nav-item"><a class="nav-link" href="/dashboard/main"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" href="/welcome"><i class="bi bi-people"></i> User Management</a></li>
+    
+    <li class="nav-item">
+        <a class="nav-link" href="#settingsMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="settingsMenu">
+            <i class="bi bi-gear"></i> Settings <i class="bi bi-chevron-down ms-2"></i>
+        </a>
+        <div class="collapse show" id="settingsMenu">
+            <ul class="nav flex-column ms-3">
+                <li class="nav-item"><a class="nav-link" href="/dashboard/setting">Profile Settings</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/backup">Backup & Restore</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/shopinfo">Shop Information</a></li>
+            </ul>
+        </div>
+    </li>
+
+    <li class="nav-item mt-5">
+        <a class="nav-link text-danger" href="/logout" onclick="return confirm('Logout ထွက်မှာ သေချာပါသလား?')">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </li>
+</ul>
+        </nav>
+
+    <div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+         <span class="navbar-brand fw-bold"><i class="bi bi-cloud-arrow-down"></i> Backup & Restore</span>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center p-3 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-cloud-plus fs-1 text-primary"></i>
+                    <h5 class="mt-2">Create Backup</h5>
+                    <p class="text-muted small">Generate a complete database backup</p>
+                    
+                    <button onclick="createBackup()" class="btn btn-outline-primary w-100">
+                        Create Now
+            </button>
+        </div>
+    </div>
+</div>
+        <div class="col-md-4">
+            <div class="card text-center p-3 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-cloud-arrow-up fs-1 text-success"></i>
+                    <h5 class="mt-2">Restore Backup</h5>
+                    <p class="text-muted small">Restore database from backup file</p>
+                    <button class="btn btn-outline-success w-100">Restore</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center p-3 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-upload fs-1 text-warning"></i>
+                    <h5 class="mt-2">Upload Backup</h5>
+                    <p class="text-muted small">Upload backup file from computer</p>
+                    <button class="btn btn-outline-warning w-100">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Available Backups</h5>
+            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>FILENAME</th>
+                        <th>SIZE</th>
+                        <th>CREATED</th>
+                        <th>MODIFIED</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>minipj_backup</td>
+                        <td>1.14 MB</td>
+                        <td>6/18/2026</td>
+                        <td>6/18/2026</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></button>
+                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-repeat"></i></button>
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+
+</body>
+
+</html>

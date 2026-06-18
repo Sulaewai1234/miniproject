@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="d-flex">
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+        <h4 class="text-white text-center py-4">Software</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="/dashboard/main"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="/welcome"><i class="bi bi-people"></i> User Management</a></li>
+            
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#settingsMenu" aria-expanded="true">
+                    <i class="bi bi-gear"></i> Settings <i class="bi bi-chevron-down ms-2"></i>
+                </a>
+                <div class="collapse show" id="settingsMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item"><a class="nav-link" href="/dashboard/setting">Profile Settings</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/dashboard/backup">Backup & Restore</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/dashboard/shopinfo">Shop Information</a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item mt-5">
+                <a class="nav-link text-danger" href="/logout" onclick="return confirm('Logout ထွက်မှာ သေချာပါသလား?')">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main-content w-100 p-4">
+        <div class="container-fluid mt-4">
+            <div class="card shadow-sm border-0 p-4">
+                <h5><i class="bi bi-gear"></i> Hospital/Clinic Settings</h5>
+                <hr>
+               <form action="/api/update-shop-info" method="POST" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="card p-3 border-0">
+                <label class="mb-2 fw-bold text-muted">Logo</label>
+                <img id="logo-preview" src="/images/default-logo.png" class="img-fluid mb-3 rounded-circle" alt="Logo" width="150" height="150">
+                <input type="file" name="logo" class="form-control form-control-sm">
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Clinic Name</label>
+                    <input type="text" name="name" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Clinic Type</label>
+                    <select name="type" class="form-select">
+                        <option value="General Clinic">General Clinic</option>
+                        <option value="Dental Clinic">Dental Clinic</option>
+                        <option value="Specialist Clinic">Specialist Clinic</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Phone</label>
+                    <input type="text" name="phone" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Email</label>
+                    <input type="email" name="email" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label class="fw-bold text-muted">Address</label>
+                    <textarea name="address" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Printer Type</label>
+                    <select name="printer" class="form-select">
+                        <option value="A4 Laser Printer">A4 Laser Printer</option>
+                        <option value="Thermal Receipt Printer">Thermal Receipt Printer</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold text-muted">Thank You Message</label>
+                    <input type="text" name="thank_msg" class="form-control">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-4 w-100">Save Changes</button>
+        </div>
+    </div>
+</form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    fetch('/api/get-shop-info')
+        .then(res => res.json())
+        .then(data => {
+            document.querySelector('[name="name"]').value = data.clinic_name || '';
+            document.querySelector('[name="phone"]').value = data.phone || '';
+            document.querySelector('[name="email"]').value = data.email || '';
+            document.querySelector('[name="address"]').value = data.address || '';
+            document.querySelector('[name="thank_msg"]').value = data.thank_msg || '';
+            
+           
+            if(data.clinic_type) document.querySelector('[name="type"]').value = data.clinic_type;
+            if(data.printer_type) document.querySelector('[name="printer"]').value = data.printer_type;
+            
+            if (data.logo_path) {
+                document.getElementById('logo-preview').src = '/uploads/' + data.logo_path;
+            }
+        });
+</script>
+
+</body>
+</html>
