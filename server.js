@@ -152,22 +152,21 @@ app.get('/dashboard/shopinfo', (req, res) => {
     res.sendFile(path.join(__dirname, 'dashboard', 'shopinfo.html'));
 });
 
-// ၁။ Database ထဲက Data ဆွဲထုတ်ရန် (GET)
+
 app.get('/api/get-shop-info', (req, res) => {
     const query = "SELECT * FROM shop_settings WHERE id = 1";
     db.query(query, (err, result) => {
         if (err) return res.status(500).json({ error: "Data error" });
-        // result[0] ရှိရင်ပိုမယ်၊ မရှိရင် empty object ပိုမယ်
+       
         res.json(result.length > 0 ? result[0] : {}); 
     });
 });
 
-// ၂။ Shop Info Update လုပ်ရန် (POST/UPDATE)
 app.post('/api/update-shop-info', upload.single('logo'), (req, res) => {
     const { name, phone, email, address, printer, thank_msg, type } = req.body;
     let logoPath = req.file ? req.file.filename : null;
 
-    // အကယ်၍ ပုံအသစ်တင်ရင် ပုံကိုပါ update လုပ်မယ်
+  
     let query = "UPDATE shop_settings SET clinic_name=?, phone=?, email=?, address=?, printer_type=?, thank_msg=?, clinic_type=?";
     let params = [name, phone, email, address, printer, thank_msg, type];
 
@@ -182,7 +181,7 @@ app.post('/api/update-shop-info', upload.single('logo'), (req, res) => {
             console.error(err);
             return res.send("Error updating settings");
         }
-        res.redirect('/dashboard/shopinfo'); // အောင်မြင်ရင် page ပြန်သွားမယ်
+        res.redirect('/dashboard/shopinfo'); 
     });
 });
 
