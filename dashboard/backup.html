@@ -23,9 +23,9 @@
         </a>
         <div class="collapse show" id="settingsMenu">
             <ul class="nav flex-column ms-3">
-                <li class="nav-item"><a class="nav-link" href="/dashboard/setting">Profile Settings</a></li>
-                <li class="nav-item"><a class="nav-link" href="/dashboard/backup">Backup & Restore</a></li>
-                <li class="nav-item"><a class="nav-link" href="/dashboard/shopinfo">Shop Information</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/setting"><i class="bi bi-gear"></i> Profile Settings</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/backup"><i class="bi bi-cloud-plus" style="font-size: 50; color: var(--primary-color);"></i> Backup & Restore</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard/shopinfo"><i class="bi bi-info-circle-fill"></i> Shop Information</a></li>
             </ul>
         </div>
     </li>
@@ -43,74 +43,55 @@
          <span class="navbar-brand fw-bold"><i class="bi bi-cloud-arrow-down"></i> Backup & Restore</span>
     </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="card-body">
-                    <i class="bi bi-cloud-plus fs-1 text-primary"></i>
-                    <h5 class="mt-2">Create Backup</h5>
-                    <p class="text-muted small">Generate a complete database backup</p>
-                    
-                    <button onclick="createBackup()" class="btn btn-outline-primary w-100">
-                        Create Now
-            </button>
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card p-4 text-center action-card border-primary">
+            <i class="bi bi-cloud-plus" style="font-size: 3rem; color: var(--primary-color);"></i>
+            <h6 class="mt-2">Create Backup</h6>
+            <button class="btn btn-sm btn-outline-primary mt-2">Generate Now</button>
         </div>
     </div>
-</div>
-        <div class="col-md-4">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="card-body">
-                    <i class="bi bi-cloud-arrow-up fs-1 text-success"></i>
-                    <h5 class="mt-2">Restore Backup</h5>
-                    <p class="text-muted small">Restore database from backup file</p>
-                    <button class="btn btn-outline-success w-100">Restore</button>
-                </div>
-            </div>
+    <div class="col-md-4">
+        <div class="card p-4 text-center action-card border-primary">
+            <i class="bi bi-cloud-arrow-down" style="font-size: 3rem; color: #10b981;"></i>
+            <h6 class="mt-2">Restore Backup</h6>
+            <button class="btn btn-sm btn-outline-primary mt-2">Restore Now</button>
         </div>
-        <div class="col-md-4">
-            <div class="card text-center p-3 shadow-sm">
-                <div class="card-body">
-                    <i class="bi bi-upload fs-1 text-warning"></i>
-                    <h5 class="mt-2">Upload Backup</h5>
-                    <p class="text-muted small">Upload backup file from computer</p>
-                    <button class="btn btn-outline-warning w-100">Upload</button>
-                </div>
-            </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card p-4 text-center action-card border-primary">
+            <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #f59e0b;"></i>
+            <h6 class="mt-2">Upload Backup</h6>
+            <button class="btn btn-sm btn-outline-primary mt-2">Upload Now</button>
         </div>
+    </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Available Backups</h5>
-            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>FILENAME</th>
-                        <th>SIZE</th>
-                        <th>CREATED</th>
-                        <th>MODIFIED</th>
-                        <th>ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>minipj_backup</td>
-                        <td>1.14 MB</td>
-                        <td>6/18/2026</td>
-                        <td>6/18/2026</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></button>
-                            <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-repeat"></i></button>
-                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                    </tbody>
-            </table>
-        </div>
-    </div>
+<div class="table-responsive">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Size</th>
+                <th>Created Date</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="fw-bold"><i class="bi bi-file-earmark-zip text-warning me-2"></i>minipj_backup</td>
+                <td>1.14 MB</td>
+                <td>18/06/2026</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-success border-0"><i class="bi bi-download"></i></button>
+                    <button class="btn btn-sm btn-outline-primary border-0"><i class="bi bi-arrow-clockwise"></i></button>
+                    <button class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 </div>
 </div>
 
