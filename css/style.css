@@ -201,3 +201,32 @@ input[type="file"] {
     background-color: #f8f9ff;
     transition: 0.3s;
 }
+
+.product-card { border-radius: 20px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
+.product-card:hover { transform: translateY(-10px); }
+.product-img { height: 200px; object-fit: cover; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+.price-tag { color: #4e54c8; font-weight: bold; }
+
+.product-img {
+    height: 160px;          
+    width: 100%;            
+    object-fit: contain;     
+    background-color: #f8f9fa;
+}
+.header-card {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 15px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.header-card h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+}

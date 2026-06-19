@@ -12,7 +12,10 @@
 
 <div class="d-flex">
      <nav class="col-md-3 col-lg-2 d-md-block sidebar">
-            <h4 class="text-white text-center py-4">Software</h4>
+            <div class="sidebar-header text-center py-4">
+                <img id="sidebar-logo" src="/images/default-logo.png" width="120" height="120" class="rounded-circle mb-2" alt="Logo">
+                <h4 class="text-white">Software</h4>
+            </div>
             <ul class="nav flex-column">
     <li class="nav-item"><a class="nav-link" href="/dashboard/main"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
     <li class="nav-item"><a class="nav-link" href="/welcome"><i class="bi bi-people"></i> User Management</a></li>
@@ -95,7 +98,18 @@
 </div>
 </div>
 
+<script>
+       fetch('/api/get-shop-info')
+        .then(res => res.json())
+        .then(data => {
+            if (data.logo_path) {
+              
+                document.getElementById('sidebar-logo').src = '/uploads/' + data.logo_path;
+            }
+        })
+        .catch(err => console.error("Logo လှမ်းခေါ်မရပါ"));
 
+</script>
 </body>
 
 </html>

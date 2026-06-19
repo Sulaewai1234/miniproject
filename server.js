@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const path = require('path');
 const session = require('express-session');
 const multer = require('multer');
+const ExcelJS=require('exceljs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -182,6 +183,116 @@ app.post('/api/update-shop-info', upload.single('logo'), (req, res) => {
             return res.send("Error updating settings");
         }
         res.redirect('/dashboard/shopinfo'); 
+    });
+});
+
+//Export Excel..............................
+
+app.get('/api/export-users',(req,res)=>{
+
+    const query="SELECT * FROM users";
+    db.query(query,async(err,results)=>{
+        if(err) return res.status(500).send("Error");
+
+        console.log("Database Result", results[0]);
+
+        const workbook=new ExcelJS.Workbook();
+        const worksheet=workbook.addWorksheet('Userlist');
+
+        worksheet.columns=[
+            {header: 'ID', key:'id', width:10},
+            {header: 'Name', key:'username', width:25},
+            {header: 'Email', key:'email', width:50},
+            {header: 'Password', key:'password', width:50}
+
+        ];
+
+        worksheet.addRows(results);
+
+        worksheet.getRow(1).font={bold: true};
+        worksheet.getRow(1).fill={
+            type:'pattern',
+            pattern:'solid',
+            fgColor:{argb:'FFD3D3D3'}
+        };
+
+        res.setHeader('Content-Type','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition','attechment; filename=Users.xlsx');
+
+        await workbook.xlsx.write(res);
+        res.send();
+
+    });
+
+});
+
+//Products..............................
+
+app.get('/dashboard/product', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dashboard', 'product.html'));
+});
+
+
+app.post('/api/add-product', upload.single('image'), (req, res) => {
+    const { name, category, brand, unit, price } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    const sql = "INSERT INTO products (name, category, brand, unit, price, image) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(sql, [name, category, brand, unit, price, image], (err, result) => {
+        if (err) {
+            console.error("Database Error:", err);
+            return res.status(500).send("Error adding product");
+        }
+        res.send("Success");
+    });
+});
+
+
+app.get('/api/products', (req, res) => {
+    db.query("SELECT * FROM products", (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
+});
+
+//Edit Product...............................
+
+app.post('/api/update-product/:id', upload.single('image'), (req, res) => {
+    const id = req.params.id;
+    const { name, category, brand, unit, price } = req.body;
+    const image = req.file ? req.file.filename : null;
+
+    let sql = "";
+    let params = [];
+
+    if (image) {
+       
+        sql = "UPDATE products SET name=?, category=?, brand=?, unit=?, price=?, image=? WHERE id=?";
+        params = [name, category, brand, unit, price, image, id];
+    } else {
+       
+        sql = "UPDATE products SET name=?, category=?, brand=?, unit=?, price=? WHERE id=?";
+        params = [name, category, brand, unit, price, id];
+    }
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            console.error("Update Error:", err);
+            return res.status(500).send("Update Failed");
+        }
+        res.send("Updated Successfully");
+    });
+});
+
+// Delete Product....................
+app.delete('/api/delete-product/:id', (req, res) => {
+    const id = req.params.id;
+    db.query("DELETE FROM products WHERE id = ?", [id], (err, result) => {
+        if (err) {
+            console.error("Delete Error:", err);
+            return res.status(500).send("Delete Failed");
+        }
+        res.send("Deleted Successfully");
     });
 });
 
